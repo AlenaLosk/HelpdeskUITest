@@ -1,12 +1,16 @@
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
 import pages.AbstractPage;
 import pages.LoginPage;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
 
 public class HelpdeskUITest {
 
@@ -27,18 +31,20 @@ public class HelpdeskUITest {
     }
 
     @Test
-    public void createTicketTest() {
-        driver.get(System.getProperty("site.url"));
-
-        // ...
-
-        // todo: чтение данных учетной записи пользователя из user.properties в System.properties
+    public void checkEarlyCreateTicketTest() throws IOException {
+        driver.get(System.getProperty("page.login.url"));
+        System.getProperties().load(ClassLoader.getSystemResourceAsStream("user.properties"));
         LoginPage loginPage = new LoginPage();
         loginPage.login(System.getProperty("user"), System.getProperty("password"));
-
-        // ...
-
-        //Закрываем текущее окно браузера
+        Select filterKeyWordSelect = new Select(driver.findElement(By.xpath("//select[@class='custom-select custom-select-sm mb-0']")));
+        filterKeyWordSelect.selectByValue("Keywords");
+        String expected = "smth was happens wrong";
+        driver.findElement(By.id("id_query")).sendKeys(expected);
+        driver.findElement(By.xpath("//input[@class='btn btn-primary btn-sm']")).click();
+        String actual = driver.findElement(By.xpath("//div[@class='tickettitle']/a")).getText();
+        assertEquals(actual.contains(expected), true);
+        driver.findElement(By.xpath("//div[@class=\"tickettitle\"]/a")).click();
+        assertEquals(driver.findElement(By.xpath("//h3")).getText().contains(expected), true);
         driver.close();
     }
 }

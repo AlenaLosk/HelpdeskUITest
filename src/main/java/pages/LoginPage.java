@@ -6,16 +6,19 @@ import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends AbstractPage {
 
-    // Обычный поиск элемента
-    private WebElement user = driver.findElement(By.id(""));
-
-    // Поиск элемента через аннотацию
-    @FindBy(id = "")
+    private boolean isPasswordRemember;
+    private WebElement user;
     private WebElement password;
 
-    // todo: остальные элементы страницы
+    public LoginPage() {
+        this.user = driver.findElement(By.id("username"));
+        this.password = driver.findElement(By.id("password"));
+        this.isPasswordRemember = driver.findElement(By.xpath("//input[@type='checkbox']")).isSelected();
+    }
 
     public void login(String user, String password) {
-        // todo
+        this.user.sendKeys(user);
+        this.password.sendKeys(password);
+        driver.findElement(By.xpath("//input[@class='btn btn-lg btn-primary btn-block']")).click();
     }
 }
